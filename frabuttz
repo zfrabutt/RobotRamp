@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+INSTALL_DIR=/home/user/etc/frabuttZayne
+PROJECT_NAME=frabuttz
+INSTALL_BIN=/home/user/bin/frabuttZayne
+BIN_NAME=frabuttz
+export PATH="$PATH:$INSTALL_DIR"
+
+Install()
+{
+    # make folder for install 
+    mkdir -p $INSTALL_DIR/$PROJECT_NAME 
+    mkdir -p $INSTALL_BIN
+
+    # put out bin into bin
+    cp $BIN_NAME $INSTALL_BIN/
+
+    # put all install files in etc
+    cp -r * $INSTALL_DIR/$PROJECT_NAME/
+
+    export PATH=/home/user/bin/frabuttZayne:$PATH
+}
+
+Uninstall()
+{
+    rm -r $INSTALL_DIR/$PROJECT_NAME
+    rm -r $INSTALL_BIN/$BIN_NAME
+}
+
+Stop()
+{
+    cat "0" > /tmp/$PROJECT_NAME
+    ./removeParts.sh
+}
+
+Start()
+{
+    cat "1" > /tmp/$PROJECT_NAME
+    cd $INSTALL_DIR/$PROJECT_NAME
+    ./runAll.sh # this spawns the robot..
+    echo "==== Robot Loaded ===="
+
+}
+
+Status()
+{
+    echo $(cat /tmp/$PROJECT_NAME)
+}
+
+Help()
+{
+    echo ' '
+    echo ' '
+    echo ' '
+    echo '---------------------------------------'
+    echo '------------ ramp-drive -------------'
+    echo '---------------------------------------'
+    echo 'install           : Install the program'
+    echo 'uninstall         : Removes the project'
+    echo 'start             : Starts the program'
+    echo 'stop              : Stops the program'
+    echo 'status            : Shows status of system'
+    echo 'help              : Shows this dialog'
+    echo ' '
+    echo ' '
+    exit 0
+}
+
+case $1 in 
+'install')
+    Install
+    ;;
+'uninstall')
+    Uninstall
+    ;;
+'help')
+    Help
+    ;;
+'start')
+    Start $2
+    ;;
+'stop')
+    Stop
+    ;;
+'status')
+    Status
+    ;;
+*)
+    Help
+    ;;
+    esac
+exit 0
